@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Table, Button, Card, Spin, Typography, Tag } from "antd";
 
 const { Title } = Typography;
+const WS_URL = process.env.REACT_APP_WS_URL || "ws://localhost:8080";
 
 const StrategiesPage = () => {
     const [strategies, setStrategies] = useState([]);
@@ -10,7 +11,7 @@ const StrategiesPage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const ws = new WebSocket("ws://localhost:8080");
+        const ws = new WebSocket(WS_URL);
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
@@ -24,8 +25,8 @@ const StrategiesPage = () => {
     const columns = [
         {
             title: "策略号",
-            dataIndex: "strategy_number",
-            key: "strategy_number",
+            dataIndex: "strategy_code",
+            key: "strategy_code",
             sorter: (a, b) => a.strategy_number.localeCompare(b.strategy_number),
             render: (text) => (
                 <Button type="link" onClick={() => navigate(`/strategy/${text}`)}>
@@ -49,7 +50,7 @@ const StrategiesPage = () => {
             ],
             onFilter: (value, record) => record.strategy_status === value,
             render: (status) => {
-                let color = "blue"; // 默认蓝色
+                let color = "blue"; 
         
                 if (status === "使用中") color = "green";
                 else if (status === "待调整") color = "orange";

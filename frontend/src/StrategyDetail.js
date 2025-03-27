@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Card, Button, Table, Spin, Typography, Tag } from "antd";
 
 const { Title, Text } = Typography;
+const WS_URL = process.env.REACT_APP_WS_URL || "ws://localhost:8080";
 
 const StrategyDetail = () => {
     const { strategyNumber } = useParams();  
@@ -13,7 +14,7 @@ const StrategyDetail = () => {
     const [isDataLoaded, setIsDataLoaded] = useState(false); 
 
     useEffect(() => {
-        const ws = new WebSocket("ws://localhost:8080");
+        const ws = new WebSocket(WS_URL);
 
         ws.onopen = () => {
             ws.send(JSON.stringify({ request_strategy_details: strategyNumber }));

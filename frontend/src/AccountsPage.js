@@ -4,13 +4,15 @@ import { Table, Button, Card, Spin, Typography } from "antd";
 
 const { Title } = Typography;
 
+const WS_URL = process.env.REACT_APP_WS_URL || "ws://localhost:8080";
+
 const AccountsPage = () => {
     const [accounts, setAccounts] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const ws = new WebSocket("ws://localhost:8080");
+        const ws = new WebSocket(WS_URL);
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);

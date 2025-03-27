@@ -60,7 +60,12 @@ const TradeHistory = ({ trades }) => {
             title: "收益率",
             dataIndex: "profit_ratio",
             key: "profit_ratio",
-            render: profit => profit ? `${(profit * 100).toFixed(4)}%` : "0.0000%",
+            render: profit => {
+                let color = "black"; 
+                if (profit > 0) color = "green"; 
+                if (profit < 0) color = "red"; 
+                return <span style={{ color }}>{(profit * 100).toFixed(4)}%</span>;
+            },
             sorter: (a, b) => a.profit_ratio - b.profit_ratio,
         },
         {
@@ -70,20 +75,27 @@ const TradeHistory = ({ trades }) => {
         },
     ];
 
-    // **🚀 关键代码：动态为 `lot_size` 为空的行添加红色**
+  
     const rowClassName = (record) => {
         return !record.lot_size || isNaN(record.lot_size) ? "row-red" : "NaN";
     };
 
     return (
-        <div style={{ marginTop: "50px" }}>
+        <div style={{ 
+            marginTop: "50px", 
+            minWidth: "1300px", 
+            display: "flex", 
+            flexDirection: "column",  // 让子元素垂直排列
+            alignItems: "center",  // 水平居中
+        }}>
             <Title level={3} style={{ textAlign: "center" }}>📊 最新十笔成交记录</Title>
             <Table 
                 columns={columns} 
                 dataSource={trades.map((trade, index) => ({ ...trade, key: index }))} 
                 pagination={{ pageSize: 10 }}
                 bordered
-                rowClassName={rowClassName}  // ✅ 这里应用行样式
+                rowClassName={rowClassName}  
+                style={{ width: "90%", maxWidth: "1400px" }}  
             />
         </div>
     );

@@ -14,13 +14,34 @@ const pool = new Pool({
     database: process.env.DB_NAME,
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT,
-});
+})
 
 const wss = new WebSocket.Server({ port: 8080 });
 
+// ✅ **添加 WebSocket 连接数限制**
+let activeConnections = 0;
+const MAX_CONNECTIONS = 100; // 🚨 设定最大连接数
+
 // 🔹 WebSocket 连接处理
 wss.on("connection", (ws) => {
-    console.log("🔗 WebSocket 连接已建立");
+    if (activeConnections >= MAX_CONNECTIONS) {
+        console.log("❌ 连接被拒绝，达到最大连接数");
+        ws.close(); // 超过限制，直接断开连接
+        return;
+    }
+
+    activeConnections++; // 连接数 +1
+    console.log(`🔗 新的 WebSocket 连接，当前连接数: ${activeConnections}`);
+
+    // **当连接关闭时，减少计数**
+    ws.on("close", () => {
+        activeConnections--;
+        console.log(`❌ 连接已关闭，当前连接数: ${activeConnections}`);
+    });
+
+    ws.on("error", (err) => {
+        console.error("⚠️ WebSocket 发生错误:", err);
+    });
 
     // 定时推送最新数据（每 5 秒）
     const interval = setInterval(async () => {
@@ -349,7 +370,7 @@ wss.on("connection", (ws) => {
         } catch (err) {
             console.error("❌ WebSocket 数据推送失败:", err);
         }
-    }, 5000); // 每 5 秒推送数据
+    }, 5000); 
 
 
     ws.on("message", async (message) => {
@@ -450,7 +471,9 @@ wss.on("connection", (ws) => {
 
 
 
-const PORT = 5000;
-app.listen(PORT, () => {
-    console.log(`✅ 服务器运行在 http://localhost:${PORT}`);
+const PORT = process.env.PORT || 5000;  // ✅ 让端口可配置
+app.listen(PORT, "0.0.0.0", () => {  // ✅ 监听 `0.0.0.0` 让外部设备可以访问
+    console.log(`✅ 服务器运行在 http://0.0.0.0:${PORT}`);
 });
+
+

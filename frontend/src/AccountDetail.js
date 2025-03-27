@@ -3,16 +3,18 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Card, Button, Table, Spin, Typography, Tag } from "antd";
 
 const { Title, Text } = Typography;
+const WS_URL = process.env.REACT_APP_WS_URL || "ws://localhost:8080";
+
 
 const AccountDetail = () => {
-    const { accountNumber } = useParams();  // 获取 URL 里的 accountNumber 参数
+    const { accountNumber } = useParams();  
     const [account, setAccount] = useState(null);
     const [trades, setTrades] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const ws = new WebSocket("ws://localhost:8080");
+        const ws = new WebSocket(WS_URL);
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);

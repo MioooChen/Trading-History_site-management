@@ -3,15 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { Button, Card, Typography, Spin } from "antd";
 
 const { Title, Text } = Typography;
+const WS_URL = process.env.REACT_APP_WS_URL || "ws://localhost:8080";
 
 const Options = () => {
     const [accountCount, setAccountCount] = useState(null);
     const [strategyCount, setStrategyCount] = useState(null);
     const [loading, setLoading] = useState(true);
-    const navigate = useNavigate(); // 用于页面跳转
+    const navigate = useNavigate(); 
 
     useEffect(() => {
-        const ws = new WebSocket("ws://localhost:8080");
+        const ws = new WebSocket(WS_URL);
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
@@ -24,7 +25,7 @@ const Options = () => {
     }, []);
 
     return (
-        <Card style={{ marginTop: "20px", padding: "20px", textAlign: "center" }}>
+        <Card style={{ marginTop: "120px", padding: "40px", textAlign: "center", marginBottom: "200px", minWidth: "900px" }}>
             <Title level={3}>⚙️ 选项</Title>
 
             {loading ? (

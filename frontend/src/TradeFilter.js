@@ -3,6 +3,8 @@ import { DatePicker, Select, Button, Card, Table, Empty } from "antd";
 
 const { RangePicker } = DatePicker;
 
+const WS_URL = process.env.REACT_APP_WS_URL || "ws://localhost:8080";
+
 const TradeFilter = () => {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
@@ -18,7 +20,7 @@ const TradeFilter = () => {
     const ws = useRef(null);
 
     useEffect(() => {
-        ws.current = new WebSocket("ws://localhost:8080");
+        ws.current = new WebSocket(WS_URL);
 
         ws.current.onopen = () => console.log("🔗 WebSocket 已连接");
 
@@ -44,10 +46,10 @@ const TradeFilter = () => {
 
         ws.current.onclose = () => console.log("❌ WebSocket 连接关闭");
 
-        return () => ws.current.close(); // ✅ 组件卸载时关闭 WebSocket
+        return () => ws.current.close(); // 
     }, []);
 
-    // **✅ 发送筛选请求**
+    
     const handleFilter = () => {
         if (!ws.current) return;
 
@@ -62,7 +64,7 @@ const TradeFilter = () => {
         }));
     };
 
-    // **Ant Design 表格列**
+    
     const columns = [
         { title: "开单时间", dataIndex: "open_time_au", key: "open_time_au" },
         { title: "品种", dataIndex: "symbol", key: "symbol" },
@@ -84,7 +86,11 @@ const TradeFilter = () => {
 
     return (
         <div style={{ marginBottom: "20px" }}>
-            <Card title="🔎 交易筛选" bordered style={{ padding: "16px", minWidth: "1000px" }}>
+            <Card title="🔎 交易筛选" bordered style={{ padding: "16px", marginTop: "50px", 
+                                                        minWidth: "1100px", 
+                                                        display: "flex", 
+                                                        flexDirection: "column",  // 让子元素垂直排列
+                                                        alignItems: "center",  }}>
                 <div style={{
                     display: "flex", 
                     flexWrap: "wrap", // ✅ 小屏幕时换行
@@ -111,7 +117,7 @@ const TradeFilter = () => {
                     </Select>
 
                     <Select
-                        mode="multiple"  // ✅ 允许多选
+                        mode="multiple"  
                         placeholder="选择标的"
                         onChange={setSelectedSymbols}
                         style={{ width: 200 }}
@@ -124,7 +130,7 @@ const TradeFilter = () => {
                     </Select>
 
                     <Select
-                        mode="multiple"  // ✅ 允许多选
+                        mode="multiple"  
                         placeholder="选择策略"
                         onChange={setSelectedStrategyCodes}
                         style={{ width: 200 }}
@@ -143,8 +149,12 @@ const TradeFilter = () => {
             </Card>
 
 
-            {/* ✅ 只监听 `filtered_trades` 并持续显示结果 */}
-            <Card title="📊 筛选交易结果" style={{ marginTop: "10px" }}>
+            
+            <Card title="📊 筛选交易结果" style={{ marginTop: "50px", 
+                                                    minWidth: "1100px", 
+                                                    display: "flex", 
+                                                    flexDirection: "column",  // 让子元素垂直排列
+                                                    alignItems: "center" }}>
                 {filteredTrades === null ? (
                     <p>🔍 请选择筛选条件并点击筛选</p>
                 ) : filteredTrades.length === 0 ? (
@@ -155,7 +165,7 @@ const TradeFilter = () => {
                         columns={columns} 
                         rowKey="open_time"
                         pagination={{ pageSize: 5 }}
-                        scroll={{ x: "max-content" }}  // ✅ 让表格随内容自适应宽度
+                        scroll={{ x: "max-content" }}  
                     />
                 )}
             </Card>
